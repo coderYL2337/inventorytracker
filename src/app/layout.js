@@ -1,5 +1,6 @@
 import { Inter } from "next/font/google";
 import "./globals.css";
+<link href="https://fonts.googleapis.com/css2?family=Pacifico&display=swap" rel="stylesheet"></link>
 
 const inter = Inter({ subsets: ["latin"] });
 
