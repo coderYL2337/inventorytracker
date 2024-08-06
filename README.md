@@ -1,3 +1,10 @@
+This app uses next.js, firebase, react-camera and OpenAI vision API to create an AI inventory assistant. Major Features: 
+   1)Users can add an item (with item name, quantity, unit) manually into inventory database, delete an item, update database and search for an item in the database. 
+   2)Users can use webcam or mobile camera to take a photo of an object. An add item form with prefilled item name would automatically pop up after the picture is taken. User can then edit, confirm or cancel the addition of the item.
+   3)After each item is added, a toast will show confirming the addition.
+   4)App is responsive on PC, mac, mobile phones and tablets. Orientation can be rotated.
+   4)A join waitlist button offers user option to leave their emails and get notified once app is ready.
+
 This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
 
 ## Getting Started
@@ -16,18 +23,11 @@ bun dev
 
 Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
 
-You can start editing the page by modifying `app/page.js`. The page auto-updates as you edit the file.
-
 This project uses [`next/font`](https://nextjs.org/docs/basic-features/font-optimization) to automatically optimize and load Inter, a custom Google Font.
 
 ## Learn More
 
-To learn more about Next.js, take a look at the following resources:
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js/) - your feedback and contributions are welcome!
 
 ## Deploy on Vercel
 
