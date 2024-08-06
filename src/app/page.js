@@ -34,6 +34,7 @@ const style = {
 export default function Home() {
   const [cameraOpen, setCameraOpen] = useState(false);
   const cameraRef = useRef(null);
+  const [numberOfCameras, setNumberOfCameras] = useState(0);
   const [image, setImage] = useState(null);
   const [inventory, setInventory] = useState([]);
   const [open, setOpen] = useState(false);
@@ -305,7 +306,7 @@ const handleItemModalClose = () => setItemModalOpen(false);
         </Button>
         <Modal open={cameraOpen} onClose={() => setCameraOpen(false)}>
           <Box sx={{ position: 'relative', width: '100%', height: '100%' }}>
-            <Camera ref={cameraRef} aspectRatio={4 / 3} />
+            <Camera ref={cameraRef} aspectRatio={4 / 3} numberOfCamerasCallback={setNumberOfCameras} />
             <Button
               onClick={handleTakePhoto}
               sx={{
@@ -321,6 +322,23 @@ const handleItemModalClose = () => setItemModalOpen(false);
             >
               <CameraAltIcon fontSize="large" />
             </Button>
+            {numberOfCameras > 1 && (
+              <Button
+                onClick={() => cameraRef.current.switchCamera()}
+                sx={{
+                  position: 'absolute',
+                  top: '10px',
+                  left: '50%',
+                  transform: 'translateX(-50%)',
+                  zIndex: 10,
+                  backgroundColor: 'white',
+                  borderRadius: '50%',
+                  padding: '10px',
+                }}
+              >
+                Switch Camera
+              </Button>
+            )}
             <Button
               onClick={() => setCameraOpen(false)}
               sx={{
