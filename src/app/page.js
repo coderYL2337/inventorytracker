@@ -268,7 +268,7 @@ const handleItemModalClose = () => setItemModalOpen(false);
         <Modal open={waitlistModalOpen} onClose={handleCloseWaitlistModal}>
           <Box sx={style}>
             <Typography variant="h6" component="h2">
-              Join the Waitlist. We'll notify you when the app is ready!
+              Join the Waitlist. We&apos;ll notify you when the app is ready!
             </Typography>
             <TextField
               label="Email Address"
