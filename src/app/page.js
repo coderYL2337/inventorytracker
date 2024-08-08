@@ -5,14 +5,18 @@ import { useRouter } from 'next/navigation';
 import { Camera } from 'react-camera-pro';
 import {
   Box, Stack, Typography, Button, Modal, TextField,
-  Snackbar, Alert, Container, List, ListItem, Avatar
+  Snackbar, Alert, Container, List, ListItem, Avatar,CircularProgress
 } from '@mui/material';
 import DeleteIcon from '@mui/icons-material/Delete';
 import CameraAltIcon from '@mui/icons-material/CameraAlt';
 import { firestore } from '../firebase';
+import RobotIcon from '@mui/icons-material/SmartToy'; // Assuming you have this icon, otherwise import the correct one
+import RecipeModal from './RecipeModal'; // Import the RecipeModal component
 import {
   collection, addDoc, doc, getDocs, query, where, updateDoc, deleteDoc
 } from 'firebase/firestore';
+import SavedRecipesModal from './SavedRecipesModal';
+
 
 const Webcam = dynamic(() => import('react-webcam'), { ssr: false });
 
@@ -51,6 +55,43 @@ export default function Home() {
   const router = useRouter();
   const [itemModalOpen, setItemModalOpen] = useState(false); // State to control the item modal
   const [successSnackbarOpen, setSuccessSnackbarOpen] = useState(false); // New state variable for success snackbar(add item by photo)
+  const [recipeModalOpen, setRecipeModalOpen] = useState(false);
+  const [recipes, setRecipes] = useState([]);
+  const [message, setMessage] = useState('')
+  const [isLoading, setIsLoading] = useState(false);
+  const [savedRecipes, setSavedRecipes] = useState([]);
+  const [savedRecipeModalOpen, setSavedRecipeModalOpen] = useState(false);
+
+  const fetchRecipes = async () => {
+    setIsLoading(true);
+    try {
+      const response = await fetch('/api/get-recipes', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ inventory }),
+      });
+      if (response.ok) {
+        const data = await response.json();
+        setRecipes(data.recipes);
+        setRecipeModalOpen(true);
+      } else {
+        console.error('Failed to fetch recipes');
+      }
+    } catch (error) {
+      console.error('Error:', error);
+    }finally {
+      setIsLoading(false);
+    }
+  };
+
+  const fetchSavedRecipes = async () => {
+    const snapshot = await getDocs(collection(firestore, 'recipes'));
+    const recipes = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+    setSavedRecipes(recipes);
+    setSavedRecipeModalOpen(true);
+  };
 
   const handleTakePhoto = async () => {
     if (cameraRef.current) {
@@ -246,6 +287,25 @@ const handleItemModalClose = () => setItemModalOpen(false);
         display: 'flex',
         alignItems: 'center'
       }}>
+        {isLoading && (
+  <Box sx={{ 
+    position: 'fixed', 
+    top: 0, 
+    left: 0, 
+    width: '100%', 
+    height: '100%', 
+    display: 'flex', 
+    flexDirection: 'column',
+    justifyContent: 'center', 
+    alignItems: 'center', 
+    backgroundColor: 'rgba(0, 0, 0, 0.5)',
+    zIndex: 9999
+  }}>
+    <CircularProgress />
+    <Typography sx={{ mt: 2, color: 'white' }}>AI generating recipes...</Typography>
+  </Box>
+)}
+        
         <Avatar
           src="/pantrylist.png"
           alt="Pantry List Logo"
@@ -433,6 +493,17 @@ const handleItemModalClose = () => setItemModalOpen(false);
           }}>
           ↻ Update
         </Button>
+        <Button 
+          variant="contained" 
+          onClick={fetchRecipes}
+          startIcon={<RobotIcon />} 
+        >
+          Recipe Generator
+        </Button>
+        <Button variant="contained" onClick={fetchSavedRecipes}>
+          Saved Recipes
+        </Button>
+
         <TextField
           label="Search"
           variant="outlined"
@@ -567,6 +638,13 @@ const handleItemModalClose = () => setItemModalOpen(false);
           No {notFoundItem} found in inventory.
         </Alert>
       </Snackbar>
+      <RecipeModal open={recipeModalOpen} onClose={() => setRecipeModalOpen(false)} recipes={recipes} message={recipes.message}/>
+      <SavedRecipesModal 
+        open={savedRecipeModalOpen} 
+        onClose={() => setSavedRecipeModalOpen(false)} 
+        recipes={savedRecipes}
+        onUpdate={fetchSavedRecipes}
+      />
     </Container>
   );
 }
