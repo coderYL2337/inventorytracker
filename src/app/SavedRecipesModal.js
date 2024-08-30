@@ -3,6 +3,7 @@ import { Modal, Box, Typography, Button, List, ListItem, IconButton } from '@mui
 import CloseIcon from '@mui/icons-material/Close';
 import { deleteDoc, doc } from 'firebase/firestore';
 import { firestore } from '../firebase';
+import { useAuth } from '@clerk/nextjs'; // Import useAuth to get the userId
 
 const modalStyle = {
   position: 'absolute',
@@ -21,12 +22,22 @@ const modalStyle = {
 
 const SavedRecipesModal = ({ open, onClose, recipes, onUpdate }) => {
   const [selectedRecipe, setSelectedRecipe] = useState(null);
+  const { userId } = useAuth(); // Get the authenticated user's ID
 
   const handleDelete = async (id) => {
-    await deleteDoc(doc(firestore, 'recipes', id));
-    onUpdate();
+    try {
+      if (!userId) {
+        console.error('User is not signed in');
+        return;
+      }
+      await deleteDoc(doc(firestore, `users/${userId}/recipes`, id));
+      console.log('Recipe deleted successfully');
+      onUpdate(); // Refresh the list after deletion
+    } catch (error) {
+      console.error('Error deleting recipe:', error);
+    }
   };
-
+ 
   const recipeDetailView = (
     <Box sx={{ textAlign: 'left', pl: 2 }}>
       <Typography variant="h5" gutterBottom>{selectedRecipe?.title}</Typography>
