@@ -18,6 +18,7 @@ import {
 import SavedRecipesModal from './SavedRecipesModal';
 import { useAuth, ClerkProvider, SignedIn, SignedOut, SignInButton, UserButton } from '@clerk/nextjs'; // Clerk Auth
 import { Toaster, toast } from 'react-hot-toast';
+import './globals.css';
 
 const Webcam = dynamic(() => import('react-webcam'), { ssr: false });
 
@@ -686,6 +687,9 @@ export default function Home() {
         recipes={savedRecipes}
         onUpdate={fetchSavedRecipes}
       />
+      <footer style={{ textAlign: 'center', marginTop: '50px' }}>
+        © Yan Lu 2024
+      </footer>
     </Container>
   );
 }
